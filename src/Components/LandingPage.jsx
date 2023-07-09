@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 const LandingPage = () => {
-  const [scan, setScan] = useState(false);
   const [cart, setCart] = useState([]);
   const [runningTotal, setRunningTotal] = useState(0);
 
@@ -16,6 +15,16 @@ const LandingPage = () => {
     setCart(updatedBasket);
     calcRunningTotal(updatedBasket);
     //whenever an item is added/scanned this func is triggered
+  };
+  const removeItem = (item) => {
+    const updatedBasket = cart.filter((val) => val !== item);
+    setCart(updatedBasket);
+    setRunningTotal(calcRunningTotal(updatedBasket));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    setRunningTotal(0);
   };
 
   const calcRunningTotal = (items) => {
@@ -50,25 +59,27 @@ const LandingPage = () => {
   return (
     <div>
       <h1>CDL CHECKOUT</h1>
-      <button onClick={setScan}>Start Scan</button>
-      {scan ? (
-        <div>
-          {" "}
-          <input
-            type="text"
-            onChange={(e) => addItem(e.target.value.toUpperCase())}
-          />
-          <p>S:</p>
-          <ul>
-            {cart.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-          <p>Total: £{runningTotal / 100}</p>
-        </div>
+      <div>
+        Enter the values:
+        <input
+          type="text"
+          onChange={(e) => addItem(e.target.value.toUpperCase())}
+        />
+        <button onClick={clearCart}>Clear</button>
+      </div>
+      <p>Basket:</p>
+      {cart.length > 0 ? (
+        <ul>
+          {cart.map((item, index) => (
+            <li key={index}>
+              {item} <button onClick={() => removeItem(item)}>Remove</button>
+            </li>
+          ))}
+        </ul>
       ) : (
-        ""
+        <p>No items in the basket.</p>
       )}
+      <p>Total: £{runningTotal / 100}</p>
     </div>
   );
 };
