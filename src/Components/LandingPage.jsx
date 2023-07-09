@@ -1,35 +1,35 @@
 import React, { useState } from "react";
 
-const LandingPage = () => {
+const Checkout = () => {
   const [cart, setCart] = useState([]);
   const [runningTotal, setRunningTotal] = useState(0);
 
-  const pricingRules = {
-    A: { price: 50, specialPrice: { quantity: 3, price: 130 } },
-    B: { price: 30, specialPrice: { quantity: 2, price: 45 } },
-    //special prices for A and B
+  const specialPrices = {
+    A: { price: 50, offers: { quantity: 3, price: 130 } },
+    B: { price: 30, offers: { quantity: 2, price: 45 } },
+    C: { price: 20, offers: {} },
+    D: { price: 15, offers: {} },
+    //special prices for A,B,C and D
   };
 
   const addItem = (item) => {
-    const updatedBasket = [...cart, item];
-    setCart(updatedBasket);
-    calcRunningTotal(updatedBasket);
-    //whenever an item is added/scanned this func is triggered
+    const updatedCart = [...cart, item];
+    setCart(updatedCart);
+    setRunningTotal(calculateRunningTotal(updatedCart));
+    //add values to cart
   };
+
   const removeItem = (item) => {
-    const updatedBasket = cart.filter((val) => val !== item);
-    setCart(updatedBasket);
-    setRunningTotal(calcRunningTotal(updatedBasket));
-    //remove item if not required
+    const itemIndex = cart.findIndex((val) => val === item);
+    if (itemIndex !== -1) {
+      const updatedCart = [...cart];
+      updatedCart.splice(itemIndex, 1);
+      setCart(updatedCart);
+      setRunningTotal(calculateRunningTotal(updatedCart));
+    }
   };
 
-  const clearCart = () => {
-    setCart([]);
-    setRunningTotal(0);
-    //clear the entire cart
-  };
-
-  const calcRunningTotal = (items) => {
+  const calculateRunningTotal = (items) => {
     let totalPrice = 0;
     const itemCounts = {};
 
@@ -38,48 +38,45 @@ const LandingPage = () => {
     });
 
     for (const item in itemCounts) {
-      if (pricingRules[item]) {
-        const { price, specialPrice } = pricingRules[item];
+      if (specialPrices[item]) {
+        const { price, offers } = specialPrices[item];
         const quantity = itemCounts[item];
 
-        if (specialPrice && quantity >= specialPrice.quantity) {
-          const specialPriceCount = Math.floor(
-            quantity / specialPrice.quantity
-          );
-          const regularPriceCount = quantity % specialPrice.quantity;
+        if (offers && quantity >= offers.quantity) {
+          const specialPriceCount = Math.floor(quantity / offers.quantity);
+          const regularPriceCount = quantity % offers.quantity;
           totalPrice +=
-            specialPriceCount * specialPrice.price + regularPriceCount * price;
+            specialPriceCount * offers.price + regularPriceCount * price;
         } else {
           totalPrice += quantity * price;
         }
       }
     }
 
-    setRunningTotal(totalPrice);
+    return totalPrice;
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    setRunningTotal(0);
   };
 
   return (
     <div>
-      <h1>CDL CHECKOUT</h1>
+      <h1>CHECKOUT</h1>
+      <p>Scan items:</p>
       <div>
-        Enter the values:
-        <input
-          type="text"
-          onChange={(e) => addItem(e.target.value.toUpperCase())}
-        />
-        <button onClick={clearCart}>Clear</button>
+        <button onClick={() => addItem("A")}>A</button>
+        <button onClick={() => addItem("B")}>B</button>
+        <button onClick={() => addItem("C")}>C</button>
+        <button onClick={() => addItem("D")}>D</button>
       </div>
-      <p>Basket:</p>
+      <p>Shooping Cart:</p>
       {cart.length > 0 ? (
         <ul>
           {cart.map((item, index) => (
             <li key={index}>
-              {item}{" "}
-              {item && (
-                <button onClick={() => removeItemFromBasket(item)}>
-                  Remove
-                </button>
-              )}
+              {item} <button onClick={() => removeItem(item)}>X</button>
             </li>
           ))}
         </ul>
@@ -87,8 +84,9 @@ const LandingPage = () => {
         <p>No items in the basket.</p>
       )}
       <p>Total: £{runningTotal / 100}</p>
+      <button onClick={clearCart}>Clear Cart</button>
     </div>
   );
 };
 
-export default LandingPage;
+export default Checkout;
