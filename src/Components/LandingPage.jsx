@@ -49,7 +49,7 @@ const LandingPage = () => {
 
   return (
     <div>
-      <h1>CDL CHECKOUT </h1>
+      <h1>CDL CHECKOUT</h1>
       <button onClick={setScan}>Start Scan</button>
       {scan ? (
         <div>
