@@ -27,9 +27,12 @@ const Checkout = () => {
       setCart(updatedCart);
       setRunningTotal(calculateRunningTotal(updatedCart));
     }
+    //remove items
   };
 
   const calculateRunningTotal = (items) => {
+    //running total function
+
     let totalPrice = 0;
     const itemCounts = {};
 
@@ -52,11 +55,11 @@ const Checkout = () => {
         }
       }
     }
-
     return totalPrice;
   };
 
   const clearCart = () => {
+    //clears all the values from the cart
     setCart([]);
     setRunningTotal(0);
   };
