@@ -20,11 +20,13 @@ const LandingPage = () => {
     const updatedBasket = cart.filter((val) => val !== item);
     setCart(updatedBasket);
     setRunningTotal(calcRunningTotal(updatedBasket));
+    //remove item if not required
   };
 
   const clearCart = () => {
     setCart([]);
     setRunningTotal(0);
+    //clear the entire cart
   };
 
   const calcRunningTotal = (items) => {
@@ -72,7 +74,12 @@ const LandingPage = () => {
         <ul>
           {cart.map((item, index) => (
             <li key={index}>
-              {item} <button onClick={() => removeItem(item)}>Remove</button>
+              {item}{" "}
+              {item && (
+                <button onClick={() => removeItemFromBasket(item)}>
+                  Remove
+                </button>
+              )}
             </li>
           ))}
         </ul>
